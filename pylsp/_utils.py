@@ -225,14 +225,20 @@ def format_docstring(
         contents = ""
 
     if markup_kind == "markdown":
-        try:
-            value = docstring_to_markdown.convert(contents)
-        except docstring_to_markdown.UnknownFormatError:
-            # try to escape the Markdown syntax instead:
-            value = escape_markdown(contents)
+        if contents != "":
+            try:
+                value = docstring_to_markdown.convert(contents)
+            except docstring_to_markdown.UnknownFormatError:
+                # try to escape the Markdown syntax instead:
+                value = escape_markdown(contents)
 
-        if signatures:
-            value = wrap_signature("\n".join(signatures)) + "\n\n" + value
+            if signatures:
+                value = wrap_signature("\n".join(signatures)) + "\n\n" + value
+        else:
+            value = contents
+
+            if signatures:
+                value = wrap_signature("\n".join(signatures))
 
         return {"kind": "markdown", "value": value}
     value = contents
